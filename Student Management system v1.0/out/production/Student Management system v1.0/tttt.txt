@@ -1,0 +1,63 @@
+public void showTableData() {
+//        layer1=this.getContentPane();
+//        layer1.setLayout(null);
+//        layer1.setBackground(Color.black);
+
+        frame1 = new JFrame("Database Search Result");
+       // frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame1.setLayout(new BorderLayout());
+        frame1.setVisible(true);
+        frame1.setSize(400, 300);
+        frame1.setLocationRelativeTo(null);
+        frame1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        //TableModel tm = new TableModel();
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(columnNames);
+        //DefaultTableModel model = new DefaultTableModel(tm.getData1(), tm.getColumnNames());
+        //table = new JTable(model);
+        table = new JTable();
+        table.setModel(model);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.setFillsViewportHeight(true);
+        JScrollPane scroll = new JScrollPane(table);
+        scroll.setHorizontalScrollBarPolicy(
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        //scl = (String) c1.getSelectedItem();
+        // String textvalue = textbox.getText();
+        String uname = "";
+        String email = "";
+        String pass = "";
+        String cou = "";
+        try {
+            //pst = con.prepareStatement("select * from emp where UNAME='" + from + "'");
+            String que="select * from account";
+            Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "22102000");
+            PreparedStatement ps2 = con.prepareStatement(que);
+            ResultSet rs1 = ps2.executeQuery();
+            int i = 0;
+            while (rs1.next()) {
+                uname = rs1.getString("name");
+                email = rs1.getString("password");
+                pass = rs1.getString("recoverypin");
+                //cou = rs1.getString("ucountry");
+                model.addRow(new Object[]{uname, email, pass, cou});
+                i++;
+            }
+            if (i < 1) {
+                JOptionPane.showMessageDialog(null, "No Record Found", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            if (i == 1) {
+                System.out.println(i + " Record Found");
+            } else {
+                System.out.println(i + " Records Found");
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        frame1.add(scroll);
+
+    }
